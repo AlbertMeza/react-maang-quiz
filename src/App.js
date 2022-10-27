@@ -1,23 +1,31 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState, useEffect } from "react"
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+import Title from './components/Title'
+import QuestionsBlock from "./components/QuestionsBlock";
+
+const App = () => {
+    const [quiz, setQuiz] = useState(false)
+
+    const fetchData = async () => {
+        try {
+            const response = await fetch('http://localhost:8000/quiz')
+            const json = await response.json()
+            setQuiz(json)
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
+    useEffect(() => {
+        fetchData()
+    }, [])
+
+    return (
+    <div className="app">
+      <Title title={quiz?.title} subtitle={quiz?.subtitle}/>
+        {quiz && quiz?.content.map(contentItem => (
+            <QuestionsBlock quizItem={contentItem}/>
+        ))}
     </div>
   );
 }
